@@ -10,5 +10,5 @@ Route::middleware('cache.headers:public;max_age=2628000;etag')->group(function (
     $extensions = array_merge(array_map('strtoupper', $extensions), array_map('strtolower', $extensions));
     Route::any('{key}.{extension}', [
         Controller::class, 'output',
-    ])->where('extension', implode('|', $extensions));
+    ])->where("key", ".*")->where('extension', implode('|', $extensions));
 });

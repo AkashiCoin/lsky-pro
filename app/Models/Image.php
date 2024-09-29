@@ -97,7 +97,8 @@ class Image extends Model
     protected static function booted()
     {
         static::creating(function (self $image) {
-            $image->key = $image->generateKey();
+//            $image->key = $image->generateKey();
+            $image->key = rtrim($image->pathname, ".{$image->extension}");
         });
 
         static::deleting(function (self $image) {
