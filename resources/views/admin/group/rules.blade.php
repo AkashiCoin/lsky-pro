@@ -38,11 +38,11 @@
             </tr>
             <tr>
                 <td class="px-3 py-2 text-gray-600 text-sm">{md5}</td>
-                <td class="px-3 py-2 text-sm">随机 md5 值</td>
+                <td class="px-3 py-2 text-sm">图片 md5 值</td>
             </tr>
             <tr>
                 <td class="px-3 py-2 text-gray-600 text-sm">{md5-16}</td>
-                <td class="px-3 py-2 text-sm">16位随机 md5 值</td>
+                <td class="px-3 py-2 text-sm">16位图片 md5 值</td>
             </tr>
             <tr>
                 <td class="px-3 py-2 text-gray-600 text-sm">{str-random-16}</td>

@@ -178,16 +178,16 @@ class ImageService
                 $watermarkImage->destroy();
             }
         }
-
+        $file_md5 = md5_file($file->getRealPath());
         $filename = $this->replacePathname(
-            $configs->get(GroupConfigKey::PathNamingRule).'/'.$configs->get(GroupConfigKey::FileNamingRule), $file,
+            $configs->get(GroupConfigKey::PathNamingRule).'/'.$configs->get(GroupConfigKey::FileNamingRule), $file, $file_md5
         );
         $pathname = $filename.".{$extension}";
 
         [$width, $height] = @getimagesize($file->getRealPath()) ?: [400, 400];
 
         $image->fill([
-            'md5' => md5_file($file->getRealPath()),
+            'md5' => $file_md5,
             'sha1' => sha1_file($file->getRealPath()),
             'path' => $configs->get(GroupConfigKey::PathNamingRule) ? dirname($pathname) : '',
             'name' => basename($pathname),
@@ -624,7 +624,7 @@ class ImageService
         }
     }
 
-    protected function replacePathname(string $pathname, UploadedFile $file): string
+    protected function replacePathname(string $pathname, UploadedFile $file, string $file_md5): string
     {
         $array = [
             '{Y}' => date('Y'),
@@ -633,8 +633,8 @@ class ImageService
             '{d}' => date('d'),
             '{timestamp}' => time(),
             '{uniqid}' => uniqid(),
-            '{md5}' => md5(microtime().Str::random()),
-            '{md5-16}' => substr(md5(microtime().Str::random()), 0, 16),
+            '{md5}' => $file_md5,
+            '{md5-16}' => substr($file_md5, 0, 16),
             '{str-random-16}' => Str::random(),
             '{str-random-10}' => Str::random(10),
             '{filename}' => Str::replaceLast('.'.$file->getClientOriginalExtension(), '', $file->getClientOriginalName()),
