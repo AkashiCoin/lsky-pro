@@ -182,7 +182,6 @@ class Controller extends BaseController
             abort(404);
         }
 
-        $mimetype = $image->mimetype;
 
         // ico 图片直接输出，不经过 InterventionImage 处理
         if ($image->extension === 'ico') {
@@ -199,6 +198,9 @@ class Controller extends BaseController
 
         return \response()->stream(function () use ($contents) {
             echo $contents;
-        }, headers: ['Content-type' => $mimetype]);
+        }, headers: [
+            'Content-type' => $mimetype,
+            'Cache-Control' => 'public, max-age=2628000',
+            'ETag' => '"' . $image->md5 . '"',]);
     }
 }
