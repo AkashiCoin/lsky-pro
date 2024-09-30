@@ -152,6 +152,25 @@ class Controller extends BaseController
         if (! $image->group?->configs->get(GroupConfigKey::IsEnableOriginalProtection)) {
             abort(404);
         }
+        $mimetype = $image->mimetype;
+
+        $etag = '"' . $image->md5 . '"';
+        $lastModified = $image->updated_at->toRfc7231String();
+
+        $clientEtag = $request->header('If-None-Match');
+        $clientLastModified = $request->header('If-Modified-Since');
+
+        $headers = [
+            'Cache-Control' => 'public, max-age=2628000',
+            'Content-Type' => $mimetype,
+            'Etag' => $etag,
+            'Last-Modified' => $lastModified,
+        ];
+
+        // 检查ETag是否匹配
+        if ($clientEtag === $etag) {
+            return response()->stream(function () {}, 304, headers: $headers);
+        }
         try {
             $cacheKey = "image_{$image->key}";
 
@@ -198,9 +217,6 @@ class Controller extends BaseController
 
         return \response()->stream(function () use ($contents) {
             echo $contents;
-        }, headers: [
-            'Content-type' => $mimetype,
-            'Cache-Control' => 'public, max-age=2628000',
-            'ETag' => '"' . $image->md5 . '"',]);
+        }, headers: $headers);
     }
 }
